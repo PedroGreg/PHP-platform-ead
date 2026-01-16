@@ -1,11 +1,16 @@
 <?php
+session_start();
 require_once('funcoes.php');
-require_once('conn.php');
-$sql_clientes = "SELECT * FROM clientes";
-$query_clientes = $pdo->prepare($sql_clientes);
-$query_clientes->execute();
-if ($query_clientes->rowCount() > 0)
-    $clientes = $query_clientes->fetchAll(PDO::FETCH_ASSOC);
+try {
+    require_once('conn.php');
+    $sql_clientes = "SELECT * FROM clientes";
+    $query_clientes = $pdo->prepare($sql_clientes);
+    $query_clientes->execute();
+    if ($query_clientes->rowCount() > 0)
+        $clientes = $query_clientes->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt_BR">
@@ -18,6 +23,7 @@ if ($query_clientes->rowCount() > 0)
 
 <body>
     <h2>Clientes</h2>
+    <p><?php if(isset($_SESSION['mensagem'])) echo $_SESSION['mensagem'] ?></p>
     <table border="1px" cellpadding="5">
         <thead>
             <th>ID</th>
@@ -38,10 +44,11 @@ if ($query_clientes->rowCount() > 0)
                     $telefone = "Telefone não cadastrado";
                     if ($cliente["telefone"] != "")
                         $telefone = telefoneformat($cliente["telefone"]);
+                    $nascimento = "Nascimento não cadastrado";
                     if ($cliente["nascimento"] != "")
                         $nascimento = dataformat($cliente["nascimento"]);
                     $data = strtotime($cliente["cadastro"]);
-                    $data = date("d/m/Y H:i" , $data);
+                    $data = date("d/m/Y H:i", $data);
                     ?>
                     <tr>
                         <td><?php echo $cliente['id'] ?></td>
@@ -50,11 +57,15 @@ if ($query_clientes->rowCount() > 0)
                         <td><?php echo $telefone ?></td>
                         <td><?php echo $nascimento ?></td>
                         <td><?php echo $data ?></td>
-                        <td><a href="editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a><a href="excluir_cliente.php?id=<?php echo $cliente['id'] ?>">Excluir</a></td>
+                        <td><a href="editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
+                        <a href="excluir_cliente.php?id=<?php echo $cliente['id'] ?>" onclick="return confirmar()">Excluir</a></td>
                     </tr>
                 <?php endforeach; endif ?>
         </tbody>
     </table>
+    <a href="cadastro.php">Cadastrar cliente</a>
+    <script src="script.js"></script>
 </body>
 
 </html>
+<?php unset($_SESSION['mensagem']);

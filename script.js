@@ -3,10 +3,10 @@ const email = document.getElementById('email');
 const telefone = document.getElementById('telefone');
 const nascimento = document.getElementById('nascimento');
 const mensagem = document.getElementById('mensagem');
-const testnome = /^[A-Za-zÀ-ÿ]+\s[A-Za-zÀ-ÿ]+$/
+const testnome = /^[A-Za-zÀ-ÿ]+[\sA-Za-zÀ-ÿ]+$/
 const testemail = /^[A-Za-z0-9._]+@[A-Za-z0-9]+\.[A-Za-z.]{2,}$/
 const testnascimento = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/
-const testtelefone = /^[0-9]{10,11}$/
+const testtelefone = /^\([0-9]{2}\)\s[0-9]{4,5}\-[0-9]{4}$/
 const submit = document.getElementById('enviar');
 submit.addEventListener('click', function (event) {
     event.preventDefault();
@@ -58,3 +58,17 @@ submit.addEventListener('click', function (event) {
         event.target.closest('form').submit();
     }
 })
+
+telefone.addEventListener('input', (campo) => {
+    let numero = campo.target.value.replace(/\D/g, '');
+    if(numero.length > 11)
+        numero = numero.slice(0,11);
+    if(numero.length <= 10)
+        campo.target.value = numero.replace(/^(\d{2})(\d{4})(\d{1,4})/, "($1) $2-$3");
+    if(numero.length == 11)
+        campo.target.value = numero.replace(/^(\d{2})(\d{5})(\d{1,4})/, "($1) $2-$3");
+})
+
+function confirmar(){
+    return window.confirm("Deseja excluir esse cliente?")
+}

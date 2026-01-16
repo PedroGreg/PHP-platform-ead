@@ -1,0 +1,87 @@
+<?php
+$id = intval($_GET["id"]);
+require_once("funcoes.php");
+try {
+    require_once("./conn.php");
+    if ($_SERVER['REQUEST_METHOD'] === "POST" && $_POST["nome"] != "" && $_POST["email"] != "") {
+        $nome = $_POST['nome'];
+        $email = strtolower($_POST['email']);
+        $telefone = $_POST['telefone'];
+        $nascimento = $_POST['nascimento'];
+        if (!empty($telefone)) {
+            $telefone = preg_replace('/[^0-9]/', "", $telefone);
+        }
+        if (!empty($nascimento)) {
+            $pedacos = explode('/', $nascimento);
+            $dataexplode = array_reverse($pedacos);
+            $dataimplode = implode('-', $dataexplode);
+        }
+        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, telefone = :telefone, nascimento = :nascimento WHERE id = :id";
+        $query_atualizar_cliente = $pdo->prepare($sql_atualizar_cliente);
+        $query_atualizar_cliente->bindParam(':id', $id, PDO::PARAM_INT);
+        $query_atualizar_cliente->bindParam(':nome', $nome, PDO::PARAM_STR);
+        $query_atualizar_cliente->bindParam(':email', $email, PDO::PARAM_STR);
+        $query_atualizar_cliente->bindParam(':telefone', $telefone, PDO::PARAM_STR);
+        $query_atualizar_cliente->bindParam(':nascimento', $dataimplode, PDO::PARAM_STR);
+        $query_atualizar_cliente->execute();
+    }
+    $sql_cliente = "SELECT * FROM clientes WHERE id = :id";
+    $query_cliente = $pdo->prepare($sql_cliente);
+    $query_cliente->bindParam(":id", $id, PDO::PARAM_INT);
+    $query_cliente->execute();
+    $cliente = $query_cliente->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "ERROR: " . $e->getMessage();
+}
+?>
+<!DOCTYPE html>
+<html lang="pt_BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar cliente</title>
+    <style>
+        body {
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
+
+        .erro {
+            background-color: #99000044;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <form action="" method="post">
+            <div class="divinput">
+                <label for="nome">Nome:</label><input type="text" name="nome" id="nome"
+                    value="<?php echo $cliente['nome'] ?>">
+            </div>
+            <div class="divinput">
+                <label for="">Email:</label><input type="text" name="email" id="email"
+                    value="<?php echo $cliente['email'] ?>">
+            </div>
+            <div class="divinput">
+                <label for="">Telefone:</label><input type="text" name="telefone" id="telefone"
+                    value="<?php echo telefoneformat($cliente['telefone']) ?>">
+            </div>
+            <div class="divinput">
+                <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
+                    id="nascimento" value="<?php echo dataformat($cliente['nascimento']) ?>">
+            </div>
+            <button type="submit" id="enviar">Cadastrar</button>
+        </form>
+    </div>
+    <div id="mensagem">
+    </div>
+    <a href="lclientes.php">Voltar à lista</a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-masker/1.1.0/vanilla-masker.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
