@@ -16,8 +16,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $dataimplode = implode('-', $dataexplode);
     }
     try{
-    require_once('../conn.php');
-    $sql = "INSERT INTO clientes(nome,email,data_nascimento,telefone) VALUES (:nome, :email, :data, :telefone)";
+    require_once('./conn.php');
+    $sql = "INSERT INTO clientes(nome,email,nascimento,telefone) VALUES (:nome, :email, :data, :telefone)";
     $query = $pdo->prepare($sql);
     $query->bindParam(':nome', $nome, PDO::PARAM_STR);
     $query->bindParam(':email', $email, PDO::PARAM_STR);
@@ -56,22 +56,24 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     <div>
         <form action="" method="post">
             <div class="divinput">
-                <label for="nome">Nome:</label><input type="text" name="nome" id="nome">
+                <label for="nome">Nome:</label><input type="text" name="nome" id="nome" value="<?php echo $_POST['nome'] ?>">
             </div>
             <div class="divinput">
-                <label for="">Email:</label><input type="text" name="email" id="email">
+                <label for="">Email:</label><input type="text" name="email" id="email" value="<?php echo $_POST['email'] ?>">
             </div>
             <div class="divinput">
-                <label for="">Telefone:</label><input type="text" name="telefone" id="telefone">
+                <label for="">Telefone:</label><input type="text" name="telefone" id="telefone" value="<?php echo $_POST['telefone'] ?>"> 
             </div>
             <div class="divinput">
                 <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
-                    id="nascimento">
+                    id="nascimento" value="<?php echo $_POST['nascimento'] ?>">
             </div>
             <button type="submit" id="enviar">Cadastrar</button>
         </form>
     </div>
     <div id="mensagem">
+    </div>
+    <a href="lclientes.php">Voltar à lista</a>
         <script src="script.js"></script>
 </body>
 

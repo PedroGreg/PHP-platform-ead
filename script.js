@@ -41,6 +41,8 @@ submit.addEventListener('click', function (event) {
         } else {
             nascimento.classList.remove('erro');
         }
+    }else{
+        nascimento.classList.remove('erro');
     }
     if (telefone.value.trim()) {
         if (!testtelefone.test(telefone.value.trim())) {
@@ -49,6 +51,8 @@ submit.addEventListener('click', function (event) {
         } else {
             telefone.classList.remove('erro');
         }
+    }else{
+        telefone.classList.remove('erro');
     }
     if (formvalido) {
         event.target.closest('form').submit();
