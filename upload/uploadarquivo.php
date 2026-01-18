@@ -34,7 +34,33 @@ function enviararquivo($pdo, $size, $error, $name, $tmp_name)
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-if (isset($_FILES['arquivo']) && $_FILES['arquivo']['name'] != '') {
+if (isset($_GET["id"])) {
+    $id = intval($_GET["id"]);
+    try {
+        $sql = "SELECT path FROM arquivos WHERE id = :id";
+        $query = $pdo->prepare($sql);
+        $query->bindParam(":id", $id, PDO::PARAM_INT);
+        $query->execute();
+        if ($query->rowCount() > 0) {
+            $arquivo = $query->fetch(PDO::FETCH_ASSOC);
+        }
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+    }
+    if (unlink($arquivo['path'])) {
+        try {
+            $sql = "DELETE FROM arquivos WHERE id = :id";
+            $query = $pdo->prepare($sql);
+            $query->bindParam(":id", $id, PDO::PARAM_INT);
+            $query->execute();
+            echo "<p>Arquivo id: $id deletado com sucesso!";
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }
+
+}
+if (isset($_FILES['arquivo']) && $_FILES['arquivo']['name'][0] != '') {
     $arquivo = $_FILES['arquivo'];
     $certo = true;
     foreach ($arquivo['name'] as $key => $value) {//Passa o dados de todos os arquivos enviados dentro da função
@@ -88,6 +114,7 @@ try {
                     <td><img style="width: auto; height: 50px" src="<?php echo $arquivo['path'] ?>" alt=""></td>
                     <td><?php echo $arquivo['nomeoriginal'] ?></td>
                     <td><?php echo date("d/m/Y H:i", strtotime($arquivo['data_upload'])) ?></td>
+                    <td><a href="?id=<?php echo $arquivo['id'] ?>">Deletar</a></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
