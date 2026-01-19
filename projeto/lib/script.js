@@ -10,76 +10,152 @@ const testsenha = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,35}$/
 const testnascimento = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/
 const testtelefone = /^\([0-9]{2}\)\s[0-9]{4,5}\-[0-9]{4}$/
 const submit = document.getElementById('enviar');
-submit.addEventListener('click', function (event) {
-    event.preventDefault();
-    let formvalido = true;
-    mensagem.innerHTML = "";
-    if (!testnome.test(nome.value.trim())) {
-        if (nome.value.length === 0) {
-            const mensagem1 = document.createElement('p');
-            mensagem1.textContent = "Preencha o nome";
-            mensagem.appendChild(mensagem1);
-        }
-        nome.classList.add('erro');
-        formvalido = false;
-    } else {
-        nome.classList.remove('erro');
-    }
-    if (!testemail.test(email.value.trim())) {
-        if (email.value.length === 0) {
-            const mensagem2 = document.createElement('p');
-            mensagem2.textContent = "Preencha o email";
-            mensagem.appendChild(mensagem2);
-        }
-        email.classList.add('erro');
-        formvalido = false;
-    } else {
-        email.classList.remove('erro');
-    }
-    if (!testsenha.test(senha.value.trim())){
-        const mensagem3 = document.createElement('p');
-        mensagem3.textContent = 'A senha deve conter pelo menos: Uma letra maiúscula, uma letra minúscula e um caracter especial (@, *, !)';
-        mensagem.appendChild(mensagem3);
-        senha.classList.add('erro');
-        formvalido = false;
-    } else{
-        senha.classList.remove('erro');
-    }
-    if (nascimento.value.trim()) {
-        if (!testnascimento.test(nascimento.value.trim())) {
-            nascimento.classList.add('erro');
+const teste = document.getElementById('teste');
+if (submit) {
+    submit.addEventListener('click', function (event) {
+        event.preventDefault();
+        let formvalido = true;
+        mensagem.innerHTML = "";
+        if (!testnome.test(nome.value.trim())) {
+            if (nome.value.length === 0) {
+                const mensagem1 = document.createElement('p');
+                mensagem1.textContent = "Preencha o nome";
+                mensagem.appendChild(mensagem1);
+            }
+            nome.classList.add('erro');
             formvalido = false;
+        } else {
+            nome.classList.remove('erro');
+        }
+        if (!testemail.test(email.value.trim())) {
+            if (email.value.length === 0) {
+                const mensagem2 = document.createElement('p');
+                mensagem2.textContent = "Preencha o email";
+                mensagem.appendChild(mensagem2);
+            }
+            email.classList.add('erro');
+            formvalido = false;
+        } else {
+            email.classList.remove('erro');
+        }
+        if (!testsenha.test(senha.value.trim())) {
+            const mensagem3 = document.createElement('p');
+            mensagem3.textContent = 'A senha deve conter pelo menos: Uma letra maiúscula, uma letra minúscula e um caracter especial (@, *, !)';
+            mensagem.appendChild(mensagem3);
+            senha.classList.add('erro');
+            formvalido = false;
+        } else {
+            senha.classList.remove('erro');
+        }
+        if (nascimento.value.trim()) {
+            if (!testnascimento.test(nascimento.value.trim())) {
+                nascimento.classList.add('erro');
+                formvalido = false;
+            } else {
+                nascimento.classList.remove('erro');
+            }
         } else {
             nascimento.classList.remove('erro');
         }
-    }else{
-        nascimento.classList.remove('erro');
-    }
-    if (telefone.value.trim()) {
-        if (!testtelefone.test(telefone.value.trim())) {
-            telefone.classList.add('erro');
-            formvalido = false;
+        if (telefone.value.trim()) {
+            if (!testtelefone.test(telefone.value.trim())) {
+                telefone.classList.add('erro');
+                formvalido = false;
+            } else {
+                telefone.classList.remove('erro');
+            }
         } else {
             telefone.classList.remove('erro');
         }
-    }else{
-        telefone.classList.remove('erro');
-    }
-    if (formvalido) {
-        event.target.closest('form').submit();
-    }
-})
+        if (formvalido) {
+            event.target.closest('form').submit();
+        }
+    })
 
-telefone.addEventListener('input', (campo) => {
-    let numero = campo.target.value.replace(/\D/g, '');
-    if(numero.length > 11)
-        numero = numero.slice(0,11);
-    if(numero.length <= 10)
-        campo.target.value = numero.replace(/^(\d{2})(\d{4})(\d{1,4})/, "($1) $2-$3");
-    if(numero.length == 11)
-        campo.target.value = numero.replace(/^(\d{2})(\d{5})(\d{1,4})/, "($1) $2-$3");
-})
+    telefone.addEventListener('input', (campo) => {
+        let numero = campo.target.value.replace(/\D/g, '');
+        if (numero.length > 11)
+            numero = numero.slice(0, 11);
+        if (numero.length <= 10)
+            campo.target.value = numero.replace(/^(\d{2})(\d{4})(\d{1,4})/, "($1) $2-$3");
+        if (numero.length == 11)
+            campo.target.value = numero.replace(/^(\d{2})(\d{5})(\d{1,4})/, "($1) $2-$3");
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+if (teste) {
+    teste.addEventListener('click', function (event) {
+        event.preventDefault();
+        let formvalido = true;
+        mensagem.innerHTML = "";
+        if (!testnome.test(nome.value.trim())) {
+            if (nome.value.length === 0) {
+                const mensagem1 = document.createElement('p');
+                mensagem1.textContent = "Preencha o nome";
+                mensagem.appendChild(mensagem1);
+            }
+            nome.classList.add('erro');
+            formvalido = false;
+        } else {
+            nome.classList.remove('erro');
+        }
+        if (!testemail.test(email.value.trim())) {
+            if (email.value.length === 0) {
+                const mensagem2 = document.createElement('p');
+                mensagem2.textContent = "Preencha o email";
+                mensagem.appendChild(mensagem2);
+            }
+            email.classList.add('erro');
+            formvalido = false;
+        } else {
+            email.classList.remove('erro');
+        }
+        if (senha.value.trim() != '') {
+            if (!testsenha.test(senha.value.trim())) {
+                const mensagem3 = document.createElement('p');
+                mensagem3.textContent = 'A senha deve conter pelo menos: Uma letra maiúscula, uma letra minúscula e um caracter especial (@, *, !)';
+                mensagem.appendChild(mensagem3);
+                senha.classList.add('erro');
+                formvalido = false;
+            } else {
+                senha.classList.remove('erro');
+            }
+        }
+        if (nascimento.value.trim()) {
+            if (!testnascimento.test(nascimento.value.trim())) {
+                nascimento.classList.add('erro');
+                formvalido = false;
+            } else {
+                nascimento.classList.remove('erro');
+            }
+        } else {
+            nascimento.classList.remove('erro');
+        }
+        if (telefone.value.trim()) {
+            if (!testtelefone.test(telefone.value.trim())) {
+                telefone.classList.add('erro');
+                formvalido = false;
+            } else {
+                telefone.classList.remove('erro');
+            }
+        } else {
+            telefone.classList.remove('erro');
+        }
+        if (formvalido) {
+            event.target.closest('form').submit();
+        }
+    })
 
-function confirmar(){
+    telefone.addEventListener('input', (campo) => {
+        let numero = campo.target.value.replace(/\D/g, '');
+        if (numero.length > 11)
+            numero = numero.slice(0, 11);
+        if (numero.length <= 10)
+            campo.target.value = numero.replace(/^(\d{2})(\d{4})(\d{1,4})/, "($1) $2-$3");
+        if (numero.length == 11)
+            campo.target.value = numero.replace(/^(\d{2})(\d{5})(\d{1,4})/, "($1) $2-$3");
+    })
+}
+function confirmar() {
     return window.confirm("Deseja excluir esse cliente?")
 }

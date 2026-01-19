@@ -1,6 +1,40 @@
 <?php
 require_once("../lib/email.php");
+require_once("../lib/upload.php");
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_FILES['foto']) && $_FILES['foto']['name'] != "") {
+        $foto = $_FILES['foto'];
+        $path = enviararquivo($pdo, $foto['size'], $foto['error'], $foto['name'], $foto['tmp_name']);
+        if (!$path) {
+            echo 'erro ao enviar a imagem';
+        }
+
+        //     $foto = $_FILES["foto"];
+        //     if ($foto["error"] != 0) {
+        //         echo 'erro ao enviar imagem';
+        //         die();
+        //     }
+        //     if ($foto['size'] > 4194304) {
+        //         echo 'a foto deve ser menor que 4 MB';
+        //         die();
+        //     }
+        //     $path = '../lib/fotos/';
+        //     $caminho = $foto['tmp_name'];
+        //     $nomeoriginal = $foto['name'];
+        //     $nomefoto = uniqid();
+        //     $extensao = pathinfo(strtolower($foto['name']), PATHINFO_EXTENSION);
+        //     $novoPath = $path . $nomefoto . '.' . $extensao;
+        //     if ($extensao != 'jpg' && $extensao != 'png' && $extensao != 'jpeg' && $extensao != 'webp') {
+        //         echo 'o arquivo deve ser uma imagem';
+        //         die();
+        //     }
+        //     $enviar = move_uploaded_file($caminho, $novoPath);
+        //     if (!$enviar) {
+        //         echo "erro ao enviar a foto";
+        //         die();
+        //     }
+    }
+
     $nome = $_POST['nome'];
     $email = strtolower($_POST['email']);
     $senhaenc = $_POST['senha'];
@@ -23,22 +57,23 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
     try {
         require_once('../lib/conn.php');
-        $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone) VALUES (:nome, :email,:senha, :data, :telefone)";
+        $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone,foto) VALUES (:nome, :email,:senha, :data, :telefone, :foto)";
         $query = $pdo->prepare($sql);
         $query->bindParam(':nome', $nome, PDO::PARAM_STR);
         $query->bindParam(':email', $email, PDO::PARAM_STR);
         $query->bindParam(':senha', $senha, PDO::PARAM_STR);
         $query->bindParam(':data', $dataimplode, PDO::PARAM_STR);
         $query->bindParam(':telefone', $telefone, PDO::PARAM_STR);
+        $query->bindParam(':foto', $path, PDO::PARAM_STR);
         $query->execute();
         echo "cliente cadastrado com sucesso!";
         $assunto = 'Cadastrado no sistema Pedro!';
         $conteudo = "<h1>Seja bem vindo!!</h1><br><p>Seu email de login é: $email</p><p>Sua senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
 
-        if (enviaremail($email, $assunto, $conteudo))
-            echo "email enviado";
-        else
-            echo "email não enviado";
+        // if (enviaremail($email, $assunto, $conteudo))
+        //     echo "email enviado";
+        // else
+        //     echo "email não enviado";
     } catch (PDOException $e) {
         echo 'error: ' . $e;
     }
@@ -68,7 +103,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 
 <body>
     <div>
-        <form action="" method="post">
+        <form enctype="multipart/form-data" action="" method="post">
             <div class="divinput">
                 <label for="nome">Nome:</label><input type="text" name="nome" id="nome"
                     value="<?php echo $_POST['nome'] ?>">
