@@ -1,4 +1,15 @@
 <?php
+if (!isset($_SESSION))
+    session_start();
+if (!$_SESSION["admin"]) {
+    if (!$_SESSION["logado"]) {
+        header("location: ./");
+        die();
+    } else {
+        header("location: ./lclientes.php");
+        die();
+    }
+}
 $id = intval($_GET["id"]);
 require_once("../lib/funcoes.php");
 require_once("../lib/upload.php");
@@ -6,30 +17,40 @@ try {
     require_once("../lib/conn.php");
     require_once("../lib/email.php");
     if ($_SERVER['REQUEST_METHOD'] === "POST" && $_POST["nome"] != "" && $_POST["email"] != "") {
-        if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ''){
+        if (isset($_FILES['foto']) && $_FILES['foto']['name'] != '') {
             $foto = $_FILES['foto'];
             $path = enviararquivo($pdo, $foto['size'], $foto['error'], $foto['name'], $foto['tmp_name']);
-            if($path){
+            if ($path) {
+                $sql = "SELECT foto FROM clientes WHERE id = :id";
+                $query = $pdo->prepare($sql);
+                $query->bindParam(":id", $id, PDO::PARAM_INT);
+                $query->execute();
+                if ($query->rowCount() > 0) {
+                    $foto = $query->fetch(PDO::FETCH_ASSOC);
+                    if ($foto["foto"] != "") {
+                        unlink($foto["foto"]);
+                    }
+                }
                 $sql_foto = 'UPDATE clientes SET foto = :foto WHERE id = :id';
                 $query_foto = $pdo->prepare($sql_foto);
                 $query_foto->bindParam(':id', $id, PDO::PARAM_INT);
                 $query_foto->bindParam(':foto', $path, PDO::PARAM_STR);
                 $query_foto->execute();
-            }
-            else {
+            } else {
                 echo 'Erro ao enviar imagem';
             }
         }
         $nome = $_POST['nome'];
         $email = strtolower($_POST['email']);
-        if(!empty($_POST['senha'])){
-        $senhaenc = $_POST['senha'];
-        $senha = password_hash($senhaenc, PASSWORD_DEFAULT);
-        $sql_senha = "senha = :senha,";
-        }else
-        $sql_senha = '';
+        if (!empty($_POST['senha'])) {
+            $senhaenc = $_POST['senha'];
+            $senha = password_hash($senhaenc, PASSWORD_DEFAULT);
+            $sql_senha = "senha = :senha,";
+        } else
+            $sql_senha = '';
         $telefone = $_POST['telefone'];
         $nascimento = $_POST['nascimento'];
+        $admin = $_POST['admin'];
         if (!empty($telefone)) {
             $telefone = preg_replace('/[^0-9]/', "", $telefone);
         }
@@ -38,15 +59,16 @@ try {
             $dataexplode = array_reverse($pedacos);
             $dataimplode = implode('-', $dataexplode);
         }
-        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, $sql_senha telefone = :telefone, nascimento = :nascimento WHERE id = :id";
+        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, $sql_senha telefone = :telefone, nascimento = :nascimento, admin = :admin WHERE id = :id";
         $query_atualizar_cliente = $pdo->prepare($sql_atualizar_cliente);
         $query_atualizar_cliente->bindParam(':id', $id, PDO::PARAM_INT);
         $query_atualizar_cliente->bindParam(':nome', $nome, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':email', $email, PDO::PARAM_STR);
-        if($sql_senha != '')
+        if ($sql_senha != '')
             $query_atualizar_cliente->bindParam(':senha', $senha, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':nascimento', $dataimplode, PDO::PARAM_STR);
+        $query_atualizar_cliente->bindParam(':admin', $admin, PDO::PARAM_BOOL);
         $query_atualizar_cliente->execute();
         $assunto = 'Usuario atualizado!';
         $conteudo = "<h1>Usuario atualizado!!</h1><br><p>Sua nova senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
@@ -97,8 +119,7 @@ try {
                     value="<?php echo $cliente['email'] ?>">
             </div>
             <div class="divinput">
-                <label for="">Senha:</label><input type="password" name="senha" id="senha"
-                    value="">
+                <label for="">Senha:</label><input type="password" name="senha" id="senha" value="">
             </div>
             <div class="divinput">
                 <label for="">Telefone:</label><input type="text" name="telefone" id="telefone"
@@ -108,12 +129,18 @@ try {
                 <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
                     id="nascimento" value="<?php echo dataformat($cliente['nascimento']) ?>">
             </div>
-            <?php if($cliente['foto']) : ?>
-            <p>Foto atual: <img height="50" src="<?php echo $cliente['foto'] ?>"></p>
+            <?php if ($cliente['foto']): ?>
+                <p>Foto atual: <img height="50" src="<?php echo $cliente['foto'] ?>"></p>
             <?php endif ?>
             <div class="divinput">
-                <label for="">Foto do usuario</label><input type="file" name="foto"
-                    id="foto">
+                <label for="">Foto do usuario</label><input type="file" name="foto" id="foto">
+            </div>
+            <div>
+                <p>
+                    <label for="">Tipo:</label>
+                    <input type="radio"<?php if($cliente['admin']) echo 'checked' ?>  name="admin" value="1" id=""><label for="">Admin</label>
+                    <input type="radio"<?php if(!$cliente['admin']) echo 'checked' ?> name="admin" value="0" id=""><label for="">Cliente</label>
+                </p>
             </div>
             <button type="submit" id="teste">Cadastrar</button>
         </form>

@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (!isset($_SESSION))
+    session_start();
 require_once('../lib/funcoes.php');
 try {
     require_once('../lib/conn.php');
@@ -23,22 +24,29 @@ try {
 
 <body>
     <h2>Clientes</h2>
-    <p><?php if(isset($_SESSION['mensagem'])) echo $_SESSION['mensagem'] ?></p>
-    <table border="1px" cellpadding="5">
-        <thead>
-            <th>ID</th>
-            <th>Foto</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Nascimento</th>
-            <th>Data cadastro</th>
-            <th>Ações</th>
+    <p><?php if (isset($_SESSION['mensagem']))
+        echo $_SESSION['mensagem'] ?></p>
+        <table border="1px" cellpadding="5">
+            <thead>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Nascimento</th>
+                <th>Data cadastro</th>
+                <th>Admin</th>
+            <?php if ($_SESSION['admin']): ?>
+                <th>Ações</th>
+            <?php endif ?>
         </thead>
         <tbody>
             <?php if (!$clientes): ?>
                 <tr>
-                    <td colspan="7">Nenhum cliente cadastrado</td>
+                    <td colspan="<?php if ($_SESSION['admin'])
+                        echo '9';
+                    else
+                        echo '8'; ?>">Nenhum cliente cadastrado</td>
                 </tr>
             <?php else:
                 foreach ($clientes as $cliente):
@@ -59,13 +67,24 @@ try {
                         <td><?php echo $telefone ?></td>
                         <td><?php echo $nascimento ?></td>
                         <td><?php echo $data ?></td>
-                        <td><a href="./editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
-                        <a href="./excluir_cliente.php?id=<?php echo $cliente['id'] ?>" onclick="return confirmar()">Excluir</a></td>
+                        <td><?php if ($cliente['admin'])
+                            echo 'SIM';
+                        else
+                            echo 'NÃO' ?></td>
+                        <?php if ($_SESSION['admin']): ?>
+                            <td><a href="./editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
+                                <a href="./excluir_cliente.php?id=<?php echo $cliente['id'] ?>"
+                                    onclick="return confirmar()">Excluir</a>
+                            </td>
+                        <?php endif ?>
                     </tr>
                 <?php endforeach; endif ?>
         </tbody>
     </table>
-    <a href="cadastro.php">Cadastrar cliente</a>
+    <?php if ($_SESSION['admin']): ?>
+        <a href="cadastro.php">Cadastrar cliente</a>
+    <?php endif ?>
+    <a href="logout.php">Sair</a>
     <script src="../lib/script.js"></script>
 </body>
 

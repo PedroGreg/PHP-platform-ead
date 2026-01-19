@@ -1,4 +1,15 @@
 <?php
+if (!isset($_SESSION))
+    session_start();
+if (!$_SESSION["admin"]) {
+    if (!$_SESSION["logado"]) {
+        header("location: ./");
+        die();
+    } else {
+        header("location: ./lclientes.php");
+        die();
+    }
+}
 require_once("../lib/email.php");
 require_once("../lib/upload.php");
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,6 +52,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     $senha = password_hash($senhaenc, PASSWORD_DEFAULT);
     $telefone = $_POST['telefone'];
     $nascimento = $_POST['nascimento'];
+    $admin = $_POST['admin'];
     if (empty($nome)) {
         echo "Preencha o nome!";
     }
@@ -57,7 +69,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
     try {
         require_once('../lib/conn.php');
-        $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone,foto) VALUES (:nome, :email,:senha, :data, :telefone, :foto)";
+        $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone,foto,admin) VALUES (:nome, :email,:senha, :data, :telefone, :foto, :admin)";
         $query = $pdo->prepare($sql);
         $query->bindParam(':nome', $nome, PDO::PARAM_STR);
         $query->bindParam(':email', $email, PDO::PARAM_STR);
@@ -65,6 +77,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $query->bindParam(':data', $dataimplode, PDO::PARAM_STR);
         $query->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $query->bindParam(':foto', $path, PDO::PARAM_STR);
+        $query->bindParam(':admin', $admin, PDO::PARAM_BOOL);
         $query->execute();
         echo "cliente cadastrado com sucesso!";
         $assunto = 'Cadastrado no sistema Pedro!';
@@ -126,6 +139,13 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             </div>
             <div class="divinput">
                 <label for="">Foto do usuario</label><input type="file" name="foto" id="foto">
+            </div>
+            <div>
+                <p>
+                    <label for="">Tipo:</label>
+                    <input type="radio" name="admin" value="1" id=""><label for="">Admin</label>
+                    <input type="radio" checked name="admin" value="0" id=""><label for="">Cliente</label>
+                </p>
             </div>
             <button type="submit" id="enviar">Cadastrar</button>
         </form>
