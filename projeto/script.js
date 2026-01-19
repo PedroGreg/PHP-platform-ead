@@ -1,10 +1,12 @@
 const nome = document.getElementById('nome');
 const email = document.getElementById('email');
+const senha = document.getElementById('senha');
 const telefone = document.getElementById('telefone');
 const nascimento = document.getElementById('nascimento');
 const mensagem = document.getElementById('mensagem');
 const testnome = /^[A-Za-zÀ-ÿ]+[\sA-Za-zÀ-ÿ]+$/
 const testemail = /^[A-Za-z0-9._]+@[A-Za-z0-9]+\.[A-Za-z.]{2,}$/
+const testsenha = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,35}$/
 const testnascimento = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/
 const testtelefone = /^\([0-9]{2}\)\s[0-9]{4,5}\-[0-9]{4}$/
 const submit = document.getElementById('enviar');
@@ -33,6 +35,15 @@ submit.addEventListener('click', function (event) {
         formvalido = false;
     } else {
         email.classList.remove('erro');
+    }
+    if (!testsenha.test(senha.value.trim())){
+        const mensagem3 = document.createElement('p');
+        mensagem3.textContent = 'A senha deve conter pelo menos: Uma letra maiúscula, uma letra minúscula e um caracter especial (@, *, !)';
+        mensagem.appendChild(mensagem3);
+        senha.classList.add('erro');
+        formvalido = false;
+    } else{
+        senha.classList.remove('erro');
     }
     if (nascimento.value.trim()) {
         if (!testnascimento.test(nascimento.value.trim())) {

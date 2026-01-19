@@ -1,6 +1,6 @@
 <?php
 if (isset($_POST["email"]) && isset($_POST["senha"])) {
-    include_once("../conn.php");
+    include_once("./conn.php");
     $email = $_POST["email"];
     $senha = $_POST["senha"];
     $sql = "SELECT * FROM usuarios WHERE email = :email";

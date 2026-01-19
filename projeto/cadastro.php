@@ -2,6 +2,7 @@
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
     $email = strtolower($_POST['email']);
+    $senha = $_POST['senha'];
     $telefone = $_POST['telefone'];
     $nascimento = $_POST['nascimento'];
     if (empty($nome)) {
@@ -20,10 +21,11 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
     try {
         require_once('./conn.php');
-        $sql = "INSERT INTO clientes(nome,email,nascimento,telefone) VALUES (:nome, :email, :data, :telefone)";
+        $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone) VALUES (:nome, :email,:senha, :data, :telefone)";
         $query = $pdo->prepare($sql);
         $query->bindParam(':nome', $nome, PDO::PARAM_STR);
         $query->bindParam(':email', $email, PDO::PARAM_STR);
+        $query->bindParam(':senha', $senha, PDO::PARAM_STR);
         $query->bindParam(':data', $dataimplode, PDO::PARAM_STR);
         $query->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $query->execute();
@@ -65,6 +67,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             <div class="divinput">
                 <label for="">Email:</label><input type="text" name="email" id="email"
                     value="<?php echo $_POST['email'] ?>">
+            </div>
+            <div class="divinput">
+                <label for="">Senha:</label><input type="password" name="senha" id="senha"
+                    value="<?php echo $_POST['senha'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Telefone:</label><input type="text" name="telefone" id="telefone"

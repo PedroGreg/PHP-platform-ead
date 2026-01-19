@@ -1,5 +1,5 @@
 <?php
-include_once('../conn.php');
+include_once('./conn.php');
 if(isset($_POST['email'])){
     $email = $_POST['email'];
     $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
