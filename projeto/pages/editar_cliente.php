@@ -8,8 +8,15 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === "POST" && $_POST["nome"] != "" && $_POST["email"] != "") {
         if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ''){
             $foto = $_FILES['foto'];
+            echo 'variavel foto salva';
             $path = enviararquivo($pdo, $foto['size'], $foto['error'], $foto['name'], $foto['tmp_name']);
             if($path){
+                $sql_foto = 'UPDATE clientes SET foto = :foto WHERE id = :id';
+                $query_foto = $pdo->prepare($sql_foto);
+                $query_foto->bindParam(':id', $id, PDO::PARAM_INT);
+                $query_foto->bindParam(':foto', $path, PDO::PARAM_STR);
+                $query_foto->execute();
+                echo 'foto enviada';
             }
             else {
                 echo 'Erro ao enviar imagem';
@@ -29,7 +36,7 @@ try {
             $dataexplode = array_reverse($pedacos);
             $dataimplode = implode('-', $dataexplode);
         }
-        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, senha = :senha, telefone = :telefone, nascimento = :nascimento, foto = :foto WHERE id = :id";
+        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, senha = :senha, telefone = :telefone, nascimento = :nascimento WHERE id = :id";
         $query_atualizar_cliente = $pdo->prepare($sql_atualizar_cliente);
         $query_atualizar_cliente->bindParam(':id', $id, PDO::PARAM_INT);
         $query_atualizar_cliente->bindParam(':nome', $nome, PDO::PARAM_STR);
@@ -37,14 +44,13 @@ try {
         $query_atualizar_cliente->bindParam(':senha', $senha, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':nascimento', $dataimplode, PDO::PARAM_STR);
-        $query_atualizar_cliente->bindParam(':foto', $path, PDO::PARAM_STR);
         $query_atualizar_cliente->execute();
         $assunto = 'Usuario atualizado!';
         $conteudo = "<h1>Usuario atualizado!!</h1><br><p>Sua nova senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
-        if(enviaremail($email, $assunto, $conteudo))
-            echo "Email enviado";
-        else
-            echo "Email não enviado";
+        // if(enviaremail($email, $assunto, $conteudo))
+        //     echo "Email enviado";
+        // else
+        //     echo "Email não enviado";
     }
     $sql_cliente = "SELECT * FROM clientes WHERE id = :id";
     $query_cliente = $pdo->prepare($sql_cliente);
