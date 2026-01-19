@@ -27,6 +27,7 @@ try {
     <table border="1px" cellpadding="5">
         <thead>
             <th>ID</th>
+            <th>Foto</th>
             <th>Nome</th>
             <th>Email</th>
             <th>Telefone</th>
@@ -52,13 +53,14 @@ try {
                     ?>
                     <tr>
                         <td><?php echo $cliente['id'] ?></td>
+                        <td><img style="width: auto; height: 50px;" src="<?php echo $cliente['foto'] ?>" alt=""></td>
                         <td><?php echo $cliente['nome'] ?></td>
                         <td><?php echo $cliente['email'] ?></td>
                         <td><?php echo $telefone ?></td>
                         <td><?php echo $nascimento ?></td>
                         <td><?php echo $data ?></td>
-                        <td><a href="editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
-                        <a href="excluir_cliente.php?id=<?php echo $cliente['id'] ?>" onclick="return confirmar()">Excluir</a></td>
+                        <td><a href="./editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
+                        <a href="./excluir_cliente.php?id=<?php echo $cliente['id'] ?>" onclick="return confirmar()">Excluir</a></td>
                     </tr>
                 <?php endforeach; endif ?>
         </tbody>

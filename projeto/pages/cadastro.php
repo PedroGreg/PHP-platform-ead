@@ -89,6 +89,9 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                 <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
                     id="nascimento" value="<?php echo $_POST['nascimento'] ?>">
             </div>
+            <div class="divinput">
+                <label for="">Foto do usuario</label><input type="file" name="foto" id="foto">
+            </div>
             <button type="submit" id="enviar">Cadastrar</button>
         </form>
     </div>

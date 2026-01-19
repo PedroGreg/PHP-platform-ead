@@ -1,9 +1,20 @@
 <?php
 $id = intval($_GET["id"]);
 require_once("../lib/funcoes.php");
+require_once("../lib/upload.php");
 try {
     require_once("../lib/conn.php");
+    require_once("../lib/email.php");
     if ($_SERVER['REQUEST_METHOD'] === "POST" && $_POST["nome"] != "" && $_POST["email"] != "") {
+        if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ''){
+            $foto = $_FILES['foto'];
+            $path = enviararquivo($pdo, $foto['size'], $foto['error'], $foto['name'], $foto['tmp_name']);
+            if($path){
+            }
+            else {
+                echo 'Erro ao enviar imagem';
+            }
+        }
         $nome = $_POST['nome'];
         $email = strtolower($_POST['email']);
         $senhaenc = $_POST['senha'];
@@ -18,7 +29,7 @@ try {
             $dataexplode = array_reverse($pedacos);
             $dataimplode = implode('-', $dataexplode);
         }
-        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, senha = :senha, telefone = :telefone, nascimento = :nascimento WHERE id = :id";
+        $sql_atualizar_cliente = "UPDATE clientes SET nome = :nome, email = :email, senha = :senha, telefone = :telefone, nascimento = :nascimento, foto = :foto WHERE id = :id";
         $query_atualizar_cliente = $pdo->prepare($sql_atualizar_cliente);
         $query_atualizar_cliente->bindParam(':id', $id, PDO::PARAM_INT);
         $query_atualizar_cliente->bindParam(':nome', $nome, PDO::PARAM_STR);
@@ -26,7 +37,14 @@ try {
         $query_atualizar_cliente->bindParam(':senha', $senha, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':nascimento', $dataimplode, PDO::PARAM_STR);
+        $query_atualizar_cliente->bindParam(':foto', $path, PDO::PARAM_STR);
         $query_atualizar_cliente->execute();
+        $assunto = 'Usuario atualizado!';
+        $conteudo = "<h1>Usuario atualizado!!</h1><br><p>Sua nova senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
+        if(enviaremail($email, $assunto, $conteudo))
+            echo "Email enviado";
+        else
+            echo "Email não enviado";
     }
     $sql_cliente = "SELECT * FROM clientes WHERE id = :id";
     $query_cliente = $pdo->prepare($sql_cliente);
@@ -60,7 +78,7 @@ try {
 
 <body>
     <div>
-        <form action="" method="post">
+        <form enctype="multipart/form-data" action="" method="post">
             <div class="divinput">
                 <label for="nome">Nome:</label><input type="text" name="nome" id="nome"
                     value="<?php echo $cliente['nome'] ?>">
@@ -80,6 +98,10 @@ try {
             <div class="divinput">
                 <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
                     id="nascimento" value="<?php echo dataformat($cliente['nascimento']) ?>">
+            </div>
+            <div class="divinput">
+                <label for="">Foto do usuario</label><input type="file" name="foto"
+                    id="foto">
             </div>
             <button type="submit" id="enviar">Cadastrar</button>
         </form>
