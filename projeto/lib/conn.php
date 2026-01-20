@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$database = "crud_clientes"; 
+$database = "estudo"; 
 $username = "root";
 $password = "";
 $charset = "utf8mb4";

@@ -1,6 +1,11 @@
 <?php
 if (!isset($_SESSION))
     session_start();
+if (!isset($_SESSION['logado']) || $_SESSION['logado'] == false) {
+    var_dump($_SESSION);
+    header('location: ./index.php');
+    die();
+}
 require_once('../lib/funcoes.php');
 try {
     require_once('../lib/conn.php');
@@ -36,14 +41,14 @@ try {
                 <th>Nascimento</th>
                 <th>Data cadastro</th>
                 <th>Admin</th>
-            <?php if ($_SESSION['admin']): ?>
+            <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
                 <th>Ações</th>
             <?php endif ?>
         </thead>
         <tbody>
             <?php if (!$clientes): ?>
                 <tr>
-                    <td colspan="<?php if ($_SESSION['admin'])
+                    <td colspan="<?php if (isset($_SESSION['admin']) && $_SESSION['admin'])
                         echo '9';
                     else
                         echo '8'; ?>">Nenhum cliente cadastrado</td>
@@ -71,7 +76,7 @@ try {
                             echo 'SIM';
                         else
                             echo 'NÃO' ?></td>
-                        <?php if ($_SESSION['admin']): ?>
+                        <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
                             <td><a href="./editar_cliente.php?id=<?php echo $cliente['id'] ?>">Editar</a>
                                 <a href="./excluir_cliente.php?id=<?php echo $cliente['id'] ?>"
                                     onclick="return confirmar()">Excluir</a>
@@ -81,7 +86,7 @@ try {
                 <?php endforeach; endif ?>
         </tbody>
     </table>
-    <?php if ($_SESSION['admin']): ?>
+    <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
         <a href="cadastro.php">Cadastrar cliente</a>
     <?php endif ?>
     <a href="logout.php">Sair</a>

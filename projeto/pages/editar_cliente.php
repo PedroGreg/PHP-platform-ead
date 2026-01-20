@@ -15,7 +15,7 @@ require_once("../lib/funcoes.php");
 require_once("../lib/upload.php");
 try {
     require_once("../lib/conn.php");
-    require_once("../lib/email.php");
+    //require_once("../lib/email.php");
     if ($_SERVER['REQUEST_METHOD'] === "POST" && $_POST["nome"] != "" && $_POST["email"] != "") {
         if (isset($_FILES['foto']) && $_FILES['foto']['name'] != '') {
             $foto = $_FILES['foto'];
@@ -70,11 +70,11 @@ try {
         $query_atualizar_cliente->bindParam(':nascimento', $dataimplode, PDO::PARAM_STR);
         $query_atualizar_cliente->bindParam(':admin', $admin, PDO::PARAM_BOOL);
         $query_atualizar_cliente->execute();
-        $assunto = 'Usuario atualizado!';
-        $conteudo = "<h1>Usuario atualizado!!</h1><br><p>Sua nova senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
-        // if(enviaremail($email, $assunto, $conteudo))
+        //$assunto = 'Usuario atualizado!';
+        //$conteudo = "<h1>Usuario atualizado!!</h1><br><p>Sua nova senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
+        //if(enviaremail($email, $assunto, $conteudo))
         //     echo "Email enviado";
-        // else
+        //else
         //     echo "Email não enviado";
     }
     $sql_cliente = "SELECT * FROM clientes WHERE id = :id";

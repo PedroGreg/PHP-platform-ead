@@ -10,10 +10,11 @@ if (!$_SESSION["admin"]) {
         die();
     }
 }
-require_once("../lib/email.php");
+//require_once("../lib/email.php");
 require_once("../lib/upload.php");
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['foto']) && $_FILES['foto']['name'] != "") {
+        require_once('../lib/conn.php');
         $foto = $_FILES['foto'];
         $path = enviararquivo($pdo, $foto['size'], $foto['error'], $foto['name'], $foto['tmp_name']);
         if (!$path) {
@@ -68,7 +69,6 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $dataimplode = implode('-', $dataexplode);
     }
     try {
-        require_once('../lib/conn.php');
         $sql = "INSERT INTO clientes(nome,email,senha,nascimento,telefone,foto,admin) VALUES (:nome, :email,:senha, :data, :telefone, :foto, :admin)";
         $query = $pdo->prepare($sql);
         $query->bindParam(':nome', $nome, PDO::PARAM_STR);
@@ -80,8 +80,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $query->bindParam(':admin', $admin, PDO::PARAM_BOOL);
         $query->execute();
         echo "cliente cadastrado com sucesso!";
-        $assunto = 'Cadastrado no sistema Pedro!';
-        $conteudo = "<h1>Seja bem vindo!!</h1><br><p>Seu email de login é: $email</p><p>Sua senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
+        //$assunto = 'Cadastrado no sistema Pedro!';
+        //$conteudo = "<h1>Seja bem vindo!!</h1><br><p>Seu email de login é: $email</p><p>Sua senha para login é: $senhaenc</p><br><br><p>Obrigado por utilizar nosso sistema!!</p>";
 
         // if (enviaremail($email, $assunto, $conteudo))
         //     echo "email enviado";
@@ -119,23 +119,23 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         <form enctype="multipart/form-data" action="" method="post">
             <div class="divinput">
                 <label for="nome">Nome:</label><input type="text" name="nome" id="nome"
-                    value="<?php echo $_POST['nome'] ?>">
+                    value="<?php if(isset($_POST['nome']))echo $_POST['nome'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Email:</label><input type="text" name="email" id="email"
-                    value="<?php echo $_POST['email'] ?>">
+                    value="<?php if(isset($_POST['nome'])) echo $_POST['email'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Senha:</label><input type="password" name="senha" id="senha"
-                    value="<?php echo $_POST['senha'] ?>">
+                    value="<?php if(isset($_POST['nome'])) echo $_POST['senha'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Telefone:</label><input type="text" name="telefone" id="telefone"
-                    value="<?php echo $_POST['telefone'] ?>">
+                    value="<?php if(isset($_POST['nome'])) echo $_POST['telefone'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Data de Nascimento</label><input placeholder="dd/mm/AAAA" type="text" name="nascimento"
-                    id="nascimento" value="<?php echo $_POST['nascimento'] ?>">
+                    id="nascimento" value="<?php if(isset($_POST['nome'])) echo $_POST['nascimento'] ?>">
             </div>
             <div class="divinput">
                 <label for="">Foto do usuario</label><input type="file" name="foto" id="foto">

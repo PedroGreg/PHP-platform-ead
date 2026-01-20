@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $pass = "";
-$dbname = "visitas";
+$dbname = "estudo";
 $username = "root";
 $charset = "utf8mb4";
 $dns = "mysql:host=$host;dbname=$dbname;$charset";

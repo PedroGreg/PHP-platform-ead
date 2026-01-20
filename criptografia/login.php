@@ -7,9 +7,11 @@ if (isset($_POST["email"]) && isset($_POST["senha"])) {
     $query = $pdo->prepare($sql);
     $query->bindParam(":email", $email, PDO::PARAM_STR);
     $query->execute();
+
     if ($query->rowCount() > 0) {
         $usuario = $query->fetch(PDO::FETCH_ASSOC);
-        if (password_verify($senha, $usuario["senha"])) {
+        $teste = password_verify($senha, $usuario["senha"]);
+        if ($teste) {
             echo "Logado!!";
         } else {
             echo "Senha incorreta!";
@@ -31,10 +33,10 @@ if (isset($_POST["email"]) && isset($_POST["senha"])) {
 <body>
     <form action="" method="post">
 
-        <p>Email<input type="text" name="email"></p>
-        <p>Senha<input type="text" name="senha"></p>
+        <p>Email<input type="text" name="email" value="<?php if(isset($_POST['email'])) echo $_POST['email'] ?>"></p>
+        <p>Senha<input type="text" name="senha" value="<?php if(isset($_POST['senha'])) echo $_POST['senha'] ?>"></p>
         <button type="submit">cadastrar</button>
-        <a href="login.php">Se já cadastrado. Clique aqui!</a>
+        <a href="cadastro.php">Se não cadastrado. Clique aqui!</a>
     </form>
 </body>
 

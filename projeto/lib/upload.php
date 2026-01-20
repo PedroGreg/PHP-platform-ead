@@ -18,21 +18,21 @@ function enviararquivo($pdo, $size, $error, $name, $tmp_name)
         return $novoPath;
     else
         return false;
-    // if ($enviar) {
-    //     try {
-    //         $sql = "INSERT INTO arquivos (nomeoriginal, path) VALUES (:nome, :path)";
-    //         $query = $pdo->prepare($sql);
-    //         $query->bindParam(":nome", $nomeDoArquivo, PDO::PARAM_STR);
-    //         $query->bindParam(":path", $novoPath, PDO::PARAM_STR);
-    //         $query->execute();
-    //         return true;
-    //     } catch (PDOException $e) {
-    //         echo $e->getMessage();
-    //         return $novoPath;
-    //     }
+    if ($pdo) {
+        try {
+            $sql = "INSERT INTO arquivos (nomeoriginal, path) VALUES (:nome, :path)";
+            $query = $pdo->prepare($sql);
+            $query->bindParam(":nome", $nomeDoArquivo, PDO::PARAM_STR);
+            $query->bindParam(":path", $novoPath, PDO::PARAM_STR);
+            $query->execute();
+            return true;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return $novoPath;
+        }
 
-    // } else {
-    //     echo "Falha ao enviar";
-    //     return false;
-    // }
+    } else {
+        echo "Falha ao enviar";
+        return false;
+    }
 }
