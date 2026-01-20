@@ -24,16 +24,6 @@ if (isset($_GET["q"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisa</title>
-    <style>
-        body {
-            min-height: 100vh;
-            background-image: linear-gradient(45deg, #4d4d4dff, #969696ff);
-        }
-
-        p {
-            color: white;
-        }
-    </style>
 </head>
 
 <body>
