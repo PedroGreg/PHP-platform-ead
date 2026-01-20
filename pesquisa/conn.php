@@ -1,10 +1,9 @@
 <?php
 
 $host = "localhost";
-$port = "";
 $user = "root";
 $pass = "";
-$db = "carros";
+$db = "estudo";
 $charset = "utf8mb4";
 $dns = "mysql:host=$host;dbname=$db;$charset";
 $options = array(
