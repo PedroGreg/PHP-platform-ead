@@ -1,5 +1,5 @@
 <?php
-$keyapi = "45f13c3b585baab3c0d710f2";
+$keyapi = "";
 if (isset($_POST['value']) && $_POST['value'] != '') {
     $requrl = "https://v6.exchangerate-api.com/v6/$keyapi/latest/USD";
     $json = file_get_contents($requrl);
